@@ -6,7 +6,8 @@ public class AssociationRule(){
     @id
     private Long id;
     private String ruleName;
+    @PositiveOrZero
     private int priorityWeight;
     private localdate LocalDatetime;
-    
+
 }
