@@ -1,8 +1,8 @@
 package com.example.demo.repository;
 
 import org.springframework.data.jpa.JpaRepository;
-import com.example.entity.ResourceAllocationRepository;
+import com.example.entity.ResourceAllocation;
 
-public interface AllocationRuleRepository extends JpaRepository<AllocationRule,Long>{
+public interface ResourceAllocationRuleRepository extends JpaRepository<ResourceAllocation,Long>{
     
 }
