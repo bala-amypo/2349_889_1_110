@@ -7,8 +7,9 @@ public class Resource(){
     private Long id;
     private String resourceName;
     private String resourceType;
+    
     private int capacity;
     private String location;
     private localdate createdAt;
-    
+
 }

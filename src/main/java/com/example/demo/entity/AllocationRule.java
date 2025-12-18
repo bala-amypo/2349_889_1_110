@@ -1,6 +1,7 @@
 import com.example.demo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 public class AssociationRule(){
     @id
