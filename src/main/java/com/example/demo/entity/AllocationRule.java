@@ -1,14 +1,20 @@
-import com.example.demo.entity;
+package com.example.demo.entity;
+
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
 
-public class AssociationRule(){
-    @id
-    private Long id;
-    private String ruleName;
-    @PositiveOrZero
-    private int priorityWeight;
-    private localdate LocalDatetime;
 
+@Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "ruleName"))
+public class AllocationRule {
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+
+
+private String ruleName;
+private String ruleType;
+private Integer priorityWeight;
+private LocalDateTime createdAt = LocalDateTime.now();
 }

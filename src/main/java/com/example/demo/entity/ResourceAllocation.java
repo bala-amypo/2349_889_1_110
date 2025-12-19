@@ -1,9 +1,32 @@
-import com.example.demo.entity;
+package com.example.demo.entity;
+
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
-public class ResourceAllocation(){
-    @id
-    private Long id;
-    private localdate 
+
+@Entity
+public class ResourceAllocation {
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+
+
+@ManyToOne
+private Resource resource;
+
+
+@OneToOne
+private ResourceRequest request;
+
+
+private Boolean conflictFlag;
+private String notes;
+private LocalDateTime allocatedAt;
+
+
+@PrePersist
+public void onCreate() {
+allocatedAt = LocalDateTime.now();
+}
 }

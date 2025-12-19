@@ -1,15 +1,21 @@
-import com.example.demo.entity;
+package com.example.demo.entity;
+
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
-public class Resource(){
-    @id
-    private Long id;
-    private String resourceName;
-    private String resourceType;
-    
-    private int capacity;
-    private String location;
-    private localdate createdAt;
 
+@Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "resourceName"))
+public class Resource {
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+
+
+private String resourceName;
+private String resourceType;
+private Integer capacity;
+private String location;
+private LocalDateTime createdAt = LocalDateTime.now();
 }
