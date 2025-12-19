@@ -1,35 +1,37 @@
 package com.example.demo.service;
 
-
-import org.springframework.stereotype.Service;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 @Service
 public class UserService {
-private final UserRepository repo;
 
+    private final UserRepository userRepository;
 
-public UserService(UserRepository repo) {
-this.repo = repo;
-}
+    // MUST be this constructor
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
+    public User registerUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("User already exists");
+        }
+        if (user.getRole() == null) {
+            user.setRole("USER");
+        }
+        return userRepository.save(user);
+    }
 
-public User registerUser(User user) {
-if (repo.existsByEmail(user.getEmail()))
-throw new RuntimeException("User already exists");
-return repo.save(user);
-}
+    public User getUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
-
-public User getUser(Long id) {
-return repo.findById(id).orElseThrow();
-}
-
-
-public List<User> getAllUsers() {
-return repo.findAll();
-}
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
