@@ -1,36 +1,53 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.ResourceRequest;
-import com.example.demo.service.ResourceRequestService;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.repository.ResourceRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/requests")
+@RequestMapping("/resources")
 public class ResourceRequestController {
 
-    private final ResourceRequestService requestService;
+    @Autowired
+    private ResourceRequestRepository resourceRequestRepository;
 
-    public ResourceRequestController(ResourceRequestService requestService) { this.requestService = requestService; }
-
-    @PostMapping("/{userId}")
-    public ResponseEntity<ResourceRequest> createRequest(@PathVariable Long userId, @RequestBody ResourceRequest request) {
-        return ResponseEntity.ok(requestService.createRequest(userId, request));
+    // CREATE RESOURCE REQUEST
+    @PostMapping
+    public ResourceRequest createRequest(@RequestBody ResourceRequest request) {
+        return resourceRequestRepository.save(request);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ResourceRequest>> getRequestsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(requestService.getRequestsByUser(userId));
+    // GET ALL REQUESTS
+    @GetMapping
+    public List<ResourceRequest> getAllRequests() {
+        return resourceRequestRepository.findAll();
     }
 
+    // GET REQUEST BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceRequest> getRequest(@PathVariable Long id) {
-        return ResponseEntity.ok(requestService.getRequest(id));
+    public Optional<ResourceRequest> getRequestById(@PathVariable Long id) {
+        return resourceRequestRepository.findById(id);
     }
 
-    @PutMapping("/status/{requestId}")
-    public ResponseEntity<ResourceRequest> updateStatus(@PathVariable Long requestId, @RequestParam String status) {
-        return ResponseEntity.ok(requestService.updateRequestStatus(requestId, status));
+    // UPDATE REQUEST
+    @PutMapping("/{id}")
+    public ResourceRequest updateRequest(@PathVariable Long id, @RequestBody ResourceRequest updatedRequest) {
+        ResourceRequest request = resourceRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ResourceRequest not found"));
+        
+        request.setResourceName(updatedRequest.getResourceName());
+        request.setQuantity(updatedRequest.getQuantity());
+        return resourceRequestRepository.save(request);
+    }
+
+    // DELETE REQUEST
+    @DeleteMapping("/{id}")
+    public String deleteRequest(@PathVariable Long id) {
+        resourceRequestRepository.deleteById(id);
+        return "ResourceRequest deleted successfully!";
     }
 }
