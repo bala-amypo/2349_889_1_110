@@ -1,10 +1,8 @@
 package com.example.demo.repository;
 
-
-import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.entity.AllocationRule;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AllocationRuleRepository extends JpaRepository<AllocationRule, Long> {
-boolean existsByRuleName(String ruleName);
+    boolean existsByRuleName(String ruleName);
 }
