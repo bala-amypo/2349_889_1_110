@@ -12,6 +12,7 @@ public class ResourceAllocation {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "resource_id")
     private Resource resource;
 
     @OneToOne
@@ -20,39 +21,60 @@ public class ResourceAllocation {
 
     private LocalDateTime allocatedAt;
 
-    private Boolean conflictFlag = false;
+    private Boolean conflictFlag;
 
     private String notes;
 
-    public ResourceAllocation() {}
+    public ResourceAllocation() {
+    }
 
     public ResourceAllocation(Resource resource, ResourceRequest request, Boolean conflictFlag, String notes) {
         this.resource = resource;
         this.request = request;
-        this.conflictFlag = conflictFlag != null ? conflictFlag : false;
+        this.conflictFlag = conflictFlag;
         this.notes = notes;
     }
 
     @PrePersist
-    public void prePersist() { allocatedAt = LocalDateTime.now(); }
+    public void onCreate() {
+        this.allocatedAt = LocalDateTime.now();
+    }
 
-    // Getters and Setters
+    // ✅ Getters & Setters
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Resource getResource() { return resource; }
-    public void setResource(Resource resource) { this.resource = resource; }
+    public Resource getResource() {
+        return resource;
+    }
 
-    public ResourceRequest getRequest() { return request; }
-    public void setRequest(ResourceRequest request) { this.request = request; }
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
 
-    public LocalDateTime getAllocatedAt() { return allocatedAt; }
-    public void setAllocatedAt(LocalDateTime allocatedAt) { this.allocatedAt = allocatedAt; }
+    public ResourceRequest getRequest() {
+        return request;
+    }
 
-    public Boolean getConflictFlag() { return conflictFlag; }
-    public void setConflictFlag(Boolean conflictFlag) { this.conflictFlag = conflictFlag; }
+    public void setRequest(ResourceRequest request) {
+        this.request = request;
+    }
 
-    public String getNotes() { return notes; }
-    public void setNotes(String notes) { this.notes = notes; }
+    public Boolean getConflictFlag() {
+        return conflictFlag;
+    }
+
+    public void setConflictFlag(Boolean conflictFlag) {
+        this.conflictFlag = conflictFlag;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }
