@@ -2,8 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Resource;
 import com.example.demo.service.ResourceService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -12,20 +12,22 @@ public class ResourceController {
 
     private final ResourceService resourceService;
 
-    public ResourceController(ResourceService resourceService) { this.resourceService = resourceService; }
+    public ResourceController(ResourceService resourceService) {
+        this.resourceService = resourceService;
+    }
 
     @PostMapping
-    public ResponseEntity<Resource> createResource(@RequestBody Resource resource) {
-        return ResponseEntity.ok(resourceService.createResource(resource));
+    public Resource create(@RequestBody Resource resource) {
+        return resourceService.createResource(resource);
     }
 
     @GetMapping
-    public ResponseEntity<List<Resource>> getAllResources() {
-        return ResponseEntity.ok(resourceService.getAllResources());
+    public List<Resource> getAll() {
+        return resourceService.getAllResources();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getResource(@PathVariable Long id) {
-        return ResponseEntity.ok(resourceService.getResource(id));
+    public Resource get(@PathVariable Long id) {
+        return resourceService.getResource(id);
     }
 }

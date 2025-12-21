@@ -1,33 +1,20 @@
-package com.example.demo.controller;
-
-import com.example.demo.entity.ResourceAllocation;
-import com.example.demo.service.ResourceAllocationService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/allocations")
 public class ResourceAllocationController {
 
-    private final ResourceAllocationService allocationService;
+    private final ResourceAllocationService service;
 
-    public ResourceAllocationController(ResourceAllocationService allocationService) {
-        this.allocationService = allocationService;
+    public ResourceAllocationController(ResourceAllocationService service) {
+        this.service = service;
     }
 
     @PostMapping("/auto/{requestId}")
-    public ResponseEntity<ResourceAllocation> autoAllocate(@PathVariable Long requestId) {
-        return ResponseEntity.ok(allocationService.autoAllocate(requestId));
+    public ResourceAllocation allocate(@PathVariable Long requestId) {
+        return service.autoAllocate(requestId);
     }
 
     @GetMapping
-    public ResponseEntity<List<ResourceAllocation>> getAllAllocations() {
-        return ResponseEntity.ok(allocationService.getAllAllocations());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ResourceAllocation> getAllocation(@PathVariable Long id) {
-        return ResponseEntity.ok(allocationService.getAllocation(id));
+    public List<ResourceAllocation> all() {
+        return service.getAllAllocations();
     }
 }
