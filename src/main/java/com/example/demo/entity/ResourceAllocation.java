@@ -4,77 +4,45 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "resource_allocations")
 public class ResourceAllocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "resource_id")
-    private Resource resource;
-
-    @OneToOne
-    @JoinColumn(name = "request_id", unique = true)
-    private ResourceRequest request;
-
+    private String resourceType;
     private LocalDateTime allocatedAt;
 
-    private Boolean conflictFlag;
+    @ManyToOne
+    private ResourceRequest resourceRequest;
 
-    private String notes;
-
-    public ResourceAllocation() {
-    }
-
-    public ResourceAllocation(Resource resource, ResourceRequest request, Boolean conflictFlag, String notes) {
-        this.resource = resource;
-        this.request = request;
-        this.conflictFlag = conflictFlag;
-        this.notes = notes;
-    }
-
-    @PrePersist
-    public void onCreate() {
-        this.allocatedAt = LocalDateTime.now();
-    }
-
-    // ✅ Getters & Setters
+    public ResourceAllocation() {}
 
     public Long getId() {
         return id;
     }
 
-    public Resource getResource() {
-        return resource;
+    public String getResourceType() {
+        return resourceType;
     }
 
-    public void setResource(Resource resource) {
-        this.resource = resource;
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
     }
 
-    public ResourceRequest getRequest() {
-        return request;
+    public LocalDateTime getAllocatedAt() {
+        return allocatedAt;
     }
 
-    public void setRequest(ResourceRequest request) {
-        this.request = request;
+    public void setAllocatedAt(LocalDateTime allocatedAt) {
+        this.allocatedAt = allocatedAt;
     }
 
-    public Boolean getConflictFlag() {
-        return conflictFlag;
+    public ResourceRequest getResourceRequest() {
+        return resourceRequest;
     }
 
-    public void setConflictFlag(Boolean conflictFlag) {
-        this.conflictFlag = conflictFlag;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setResourceRequest(ResourceRequest resourceRequest) {
+        this.resourceRequest = resourceRequest;
     }
 }

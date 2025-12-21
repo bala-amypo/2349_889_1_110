@@ -3,28 +3,34 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "allocation_rules")
 public class AllocationRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String resourceType;
-    private int priority;
+    private String ruleName;
+    private String description;
 
-    public AllocationRule() {
+    public AllocationRule() {}
+
+    public Long getId() {
+        return id;
     }
 
-    public Long getId() { return id; }
-
-    public String getResourceType() { return resourceType; }
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
+    public String getRuleName() {
+        return ruleName;
     }
 
-    public int getPriority() { return priority; }
-    public void setPriority(int priority) {
-        this.priority = priority;
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
