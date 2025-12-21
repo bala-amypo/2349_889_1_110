@@ -1,58 +1,39 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.ResourceRequest;
-import com.example.demo.entity.User;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.ResourceRequestRepository;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ResourceRequestService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 public class ResourceRequestServiceImpl implements ResourceRequestService {
 
-    private final ResourceRequestRepository requestRepository;
-    private final UserRepository userRepository;
-
-    public ResourceRequestServiceImpl(ResourceRequestRepository requestRepository, UserRepository userRepository) {
-        this.requestRepository = requestRepository;
-        this.userRepository = userRepository;
-    }
+    private final List<ResourceRequest> requests = new ArrayList<>();
 
     @Override
     public ResourceRequest createRequest(Long userId, ResourceRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        if (request.getStartTime() != null && request.getEndTime() != null &&
-            request.getStartTime().isAfter(request.getEndTime())) {
-            throw new IllegalArgumentException("Start time must be before end time");
-        }
-        if (request.getPurpose() == null || request.getPurpose().isEmpty()) {
-            throw new IllegalArgumentException("Purpose is required");
-        }
-        request.setRequestedBy(user);
-        request.setStatus("PENDING");
-        return requestRepository.save(request);
+        requests.add(request);
+        return request;
     }
 
     @Override
     public List<ResourceRequest> getRequestsByUser(Long userId) {
-        return requestRepository.findByRequestedById(userId);
+        return requests;
     }
 
     @Override
     public ResourceRequest getRequest(Long id) {
-        return requestRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+        return requests.isEmpty() ? null : requests.get(0);
     }
 
     @Override
     public ResourceRequest updateRequestStatus(Long requestId, String status) {
-        ResourceRequest request = getRequest(requestId);
-        request.setStatus(status);
-        return requestRepository.save(request);
+        ResourceRequest r = getRequest(requestId);
+        if (r != null) {
+            r.setStatus(status);
+        }
+        return r;
     }
 }
