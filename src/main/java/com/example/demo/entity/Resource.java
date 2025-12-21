@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,21 +12,14 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
     private String resourceName;
-
-    @Column(nullable = false)
     private String resourceType;
-
-    @Column(nullable = false)
     private Integer capacity;
-
     private String location;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "resource")
-    private List<ResourceAllocation> allocations = new ArrayList<>();
+    private List<ResourceAllocation> allocations;
 
     public Resource() {}
 
@@ -38,26 +30,10 @@ public class Resource {
         this.location = location;
     }
 
-    // Getters and Setters
+    @PrePersist
+    void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getResourceName() { return resourceName; }
-    public void setResourceName(String resourceName) { this.resourceName = resourceName; }
-
-    public String getResourceType() { return resourceType; }
-    public void setResourceType(String resourceType) { this.resourceType = resourceType; }
-
-    public Integer getCapacity() { return capacity; }
-    public void setCapacity(Integer capacity) { this.capacity = capacity; }
-
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public List<ResourceAllocation> getAllocations() { return allocations; }
-    public void setAllocations(List<ResourceAllocation> allocations) { this.allocations = allocations; }
+    // getters & setters
 }

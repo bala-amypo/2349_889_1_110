@@ -5,11 +5,10 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ResourceRepository;
 import com.example.demo.service.ResourceService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
-@Transactional
 public class ResourceServiceImpl implements ResourceService {
 
     private final ResourceRepository resourceRepository;
@@ -20,14 +19,11 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public Resource createResource(Resource resource) {
-        if (resource.getCapacity() == null || resource.getCapacity() < 1) {
-            throw new IllegalArgumentException("Capacity must be at least 1");
-        }
-        if (resource.getResourceType() == null || resource.getResourceType().isEmpty()) {
-            throw new IllegalArgumentException("Resource type is required");
-        }
         if (resourceRepository.existsByResourceName(resource.getResourceName())) {
-            throw new IllegalArgumentException("Resource name already exists");
+            throw new IllegalArgumentException("Resource already exists");
+        }
+        if (resource.getCapacity() < 1) {
+            throw new IllegalArgumentException("Capacity must be at least 1");
         }
         return resourceRepository.save(resource);
     }
