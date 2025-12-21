@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "allocation_rules")
@@ -11,51 +10,21 @@ public class AllocationRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String ruleName;
-
-    private String ruleType;
-
-    private Integer priorityWeight;
-
-    private LocalDateTime createdAt;
+    private String resourceType;
+    private int priority;
 
     public AllocationRule() {
     }
 
-    public AllocationRule(String ruleName, String ruleType, Integer priorityWeight) {
-        this.ruleName = ruleName;
-        this.ruleType = ruleType;
-        this.priorityWeight = priorityWeight;
+    public Long getId() { return id; }
+
+    public String getResourceType() { return resourceType; }
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
     }
 
-    // ✅ Getters & Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public String getRuleType() {
-        return ruleType;
-    }
-
-    public void setRuleType(String ruleType) {
-        this.ruleType = ruleType;
-    }
-
-    public Integer getPriorityWeight() {
-        return priorityWeight;
-    }
-
-    public void setPriorityWeight(Integer priorityWeight) {
-        this.priorityWeight = priorityWeight;
+    public int getPriority() { return priority; }
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }

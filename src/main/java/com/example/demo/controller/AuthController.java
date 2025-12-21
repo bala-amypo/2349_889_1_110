@@ -29,7 +29,7 @@ public class AuthController {
         if (existingUser.isPresent()) {
             User u = existingUser.get();
             if (u.getPassword().equals(user.getPassword())) {
-                return "Login successful for " + u.getName();
+                return "Login successful for " + u.getFullName();
             }
         }
         return "Invalid credentials";
