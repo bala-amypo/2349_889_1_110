@@ -13,27 +13,13 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
     private final List<ResourceRequest> requests = new ArrayList<>();
 
     @Override
-    public ResourceRequest createRequest(Long userId, ResourceRequest request) {
+    public ResourceRequest save(ResourceRequest request) {
         requests.add(request);
         return request;
     }
 
     @Override
-    public List<ResourceRequest> getRequestsByUser(Long userId) {
+    public List<ResourceRequest> getAll() {
         return requests;
-    }
-
-    @Override
-    public ResourceRequest getRequest(Long id) {
-        return requests.isEmpty() ? null : requests.get(0);
-    }
-
-    @Override
-    public ResourceRequest updateRequestStatus(Long requestId, String status) {
-        ResourceRequest r = getRequest(requestId);
-        if (r != null) {
-            r.setStatus(status);
-        }
-        return r;
     }
 }

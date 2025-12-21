@@ -10,20 +10,16 @@ import java.util.List;
 @Service
 public class ResourceAllocationServiceImpl implements ResourceAllocationService {
 
+    private final List<ResourceAllocation> allocations = new ArrayList<>();
+
     @Override
-    public ResourceAllocation autoAllocate(Long requestId) {
-        // dummy implementation for now
-        return new ResourceAllocation();
+    public ResourceAllocation save(ResourceAllocation allocation) {
+        allocations.add(allocation);
+        return allocation;
     }
 
     @Override
-    public ResourceAllocation getAllocation(Long id) {
-        // dummy implementation for now
-        return new ResourceAllocation();
-    }
-
-    @Override
-    public List<ResourceAllocation> getAllAllocations() {
-        return new ArrayList<>();
+    public List<ResourceAllocation> getAll() {
+        return allocations;
     }
 }

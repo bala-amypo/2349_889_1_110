@@ -13,7 +13,7 @@ public class AllocationRuleServiceImpl implements AllocationRuleService {
     private final List<AllocationRule> rules = new ArrayList<>();
 
     @Override
-    public AllocationRule createRule(AllocationRule rule) {
+    public AllocationRule saveRule(AllocationRule rule) {
         rules.add(rule);
         return rule;
     }
