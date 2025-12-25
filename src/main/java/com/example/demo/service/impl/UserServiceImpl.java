@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,16 +17,17 @@ public class UserServiceImpl implements UserService {
 
     public User registerUser(User user) {
         if (repo.existsByEmail(user.getEmail()))
-            throw new IllegalArgumentException("email exists");
+            throw new IllegalArgumentException("Email already exists");
 
-        user.setRole(user.getRole() == null ? "USER" : user.getRole());
+        if (user.getRole() == null)
+            user.setRole("USER");
+
         user.setPassword(encoder.encode(user.getPassword()));
         return repo.save(user);
     }
 
     public User getUser(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public List<User> getAllUsers() {

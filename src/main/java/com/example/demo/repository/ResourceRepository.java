@@ -5,3 +5,8 @@ import com.example.demo.entity.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+public interface ResourceRepository extends JpaRepository<Resource, Long> {
+    boolean existsByResourceName(String name);
+    List<Resource> findByResourceType(String type);
+}

@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Resource;
 import com.example.demo.repository.ResourceRepository;
 import com.example.demo.service.ResourceService;
-import com.example.demo.exception.ResourceNotFoundException;
 import java.util.List;
 
 public class ResourceServiceImpl implements ResourceService {
@@ -19,14 +18,13 @@ public class ResourceServiceImpl implements ResourceService {
             throw new IllegalArgumentException("Invalid resource");
 
         if (repo.existsByResourceName(r.getResourceName()))
-            throw new IllegalArgumentException("resource exists");
+            throw new IllegalArgumentException("Resource exists");
 
         return repo.save(r);
     }
 
     public Resource getResource(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found"));
     }
 
     public List<Resource> getAllResources() {
