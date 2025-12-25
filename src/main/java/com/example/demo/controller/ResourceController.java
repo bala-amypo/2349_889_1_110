@@ -1,13 +1,35 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Resource;
+import com.example.demo.service.ResourceService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/resources")
+@Tag(name = "Resource")
 public class ResourceController {
 
+    private final ResourceService resourceService;
+
+    public ResourceController(ResourceService resourceService) {
+        this.resourceService = resourceService;
+    }
+
+    @PostMapping
+    public Resource create(@RequestBody Resource resource) {
+        return resourceService.createResource(resource);
+    }
+
     @GetMapping
-    public String resourcesInfo() {
-        return "Resource API";
+    public List<Resource> getAll() {
+        return resourceService.getAllResources();
+    }
+
+    @GetMapping("/type/{type}")
+    public List<Resource> findByType(@PathVariable String type) {
+        return resourceService.findByType(type);
     }
 }
