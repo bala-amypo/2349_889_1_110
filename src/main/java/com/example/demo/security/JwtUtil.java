@@ -6,19 +6,25 @@ import java.util.Date;
 public class JwtUtil {
 
     private final String secret;
-    private final long validity;
+    private final long validityMs;
 
-    public JwtUtil(String secret, long validity) {
+    public JwtUtil(String secret, long validityMs) {
         this.secret = secret;
-        this.validity = validity;
+        this.validityMs = validityMs;
     }
 
-    public String generateToken(Long id, String email, String role) {
+    public String generateToken(Long userId, String email, String role) {
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("userId", userId);
+        claims.put("role", role);
+
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + validityMs);
+
         return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", id)
-                .claim("role", role)
-                .setExpiration(new Date(System.currentTimeMillis() + validity))
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(exp)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
