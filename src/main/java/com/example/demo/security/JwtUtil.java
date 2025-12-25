@@ -1,29 +1,39 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
-import java.util.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
 
 public class JwtUtil {
 
-    private final String secret;
-    private final long expiry;
+    private final SecretKey key;
+    private final long expirationMillis;
 
-    public JwtUtil(String secret, long expiry) {
-        this.secret = secret;
-        this.expiry = expiry;
+    public JwtUtil(String secret, long expirationMillis) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.expirationMillis = expirationMillis;
     }
 
-    public String generateToken(Long id, String email, String role) {
+    public String generateToken(Long userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("userId", userId)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiry))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public Claims parseClaims(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
