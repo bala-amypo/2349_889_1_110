@@ -4,7 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.entity.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
-    java.util.Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 }
