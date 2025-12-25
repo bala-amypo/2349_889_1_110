@@ -6,7 +6,6 @@ public class ApiResponse {
     private Object data;
 
     public ApiResponse() {}
-
     public ApiResponse(boolean success, String message, Object data) {
         this.success = success;
         this.message = message;
