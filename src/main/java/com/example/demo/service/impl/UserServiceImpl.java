@@ -1,36 +1,45 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repo;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public UserServiceImpl(UserRepository repo) {
-        this.repo = repo;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
+    @Override
     public User registerUser(User user) {
-        if (repo.existsByEmail(user.getEmail()))
-            throw new IllegalArgumentException("Email already exists");
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("User already exists");
+        }
 
-        if (user.getRole() == null)
+        if (user.getRole() == null) {
             user.setRole("USER");
+        }
 
+        // hash password
         user.setPassword(encoder.encode(user.getPassword()));
-        return repo.save(user);
+        return userRepository.save(user);
     }
 
+    @Override
     public User getUser(Long id) {
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
+    @Override
     public List<User> getAllUsers() {
-        return repo.findAll();
+        return userRepository.findAll();
     }
 }

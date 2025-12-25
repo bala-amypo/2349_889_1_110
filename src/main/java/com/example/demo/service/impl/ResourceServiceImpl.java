@@ -1,33 +1,46 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Resource;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ResourceRepository;
 import com.example.demo.service.ResourceService;
+
 import java.util.List;
 
 public class ResourceServiceImpl implements ResourceService {
 
-    private final ResourceRepository repo;
+    private final ResourceRepository resourceRepository;
 
-    public ResourceServiceImpl(ResourceRepository repo) {
-        this.repo = repo;
+    public ResourceServiceImpl(ResourceRepository resourceRepository) {
+        this.resourceRepository = resourceRepository;
     }
 
-    public Resource createResource(Resource r) {
-        if (r.getResourceType() == null || r.getCapacity() == null || r.getCapacity() < 1)
-            throw new IllegalArgumentException("Invalid resource");
+    @Override
+    public Resource createResource(Resource resource) {
 
-        if (repo.existsByResourceName(r.getResourceName()))
-            throw new IllegalArgumentException("Resource exists");
+        if (resource.getResourceType() == null) {
+            throw new IllegalArgumentException("Resource type required");
+        }
 
-        return repo.save(r);
+        if (resource.getCapacity() == null || resource.getCapacity() < 1) {
+            throw new IllegalArgumentException("Invalid capacity");
+        }
+
+        if (resourceRepository.existsByResourceName(resource.getResourceName())) {
+            throw new IllegalArgumentException("Resource already exists");
+        }
+
+        return resourceRepository.save(resource);
     }
 
+    @Override
     public Resource getResource(Long id) {
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found"));
+        return resourceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
 
+    @Override
     public List<Resource> getAllResources() {
-        return repo.findAll();
+        return resourceRepository.findAll();
     }
 }
