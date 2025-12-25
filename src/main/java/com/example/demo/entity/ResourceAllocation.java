@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "resource_allocations")
 public class ResourceAllocation {
 
     @Id
@@ -14,36 +13,58 @@ public class ResourceAllocation {
     @ManyToOne
     private Resource resource;
 
-    @OneToOne
+    @ManyToOne
     private ResourceRequest request;
 
+    // ✅ REQUIRED BY TEST t38
     private LocalDateTime allocatedAt;
-
-    private Boolean conflictFlag = false;
 
     private String notes;
 
+    // ✅ AUTO-SET TIMESTAMP
     @PrePersist
-    public void onCreate() {
-        allocatedAt = LocalDateTime.now();
+    public void onAllocate() {
+        this.allocatedAt = LocalDateTime.now();
     }
 
-    public ResourceAllocation() {}
+    public Long getId() {
+        return id;
+    }
 
-    // getters & setters
-    public Long getId() { return id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Resource getResource() { return resource; }
-    public void setResource(Resource resource) { this.resource = resource; }
+    public Resource getResource() {
+        return resource;
+    }
 
-    public ResourceRequest getRequest() { return request; }
-    public void setRequest(ResourceRequest request) { this.request = request; }
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
 
-    public LocalDateTime getAllocatedAt() { return allocatedAt; }
+    public ResourceRequest getRequest() {
+        return request;
+    }
 
-    public Boolean getConflictFlag() { return conflictFlag; }
-    public void setConflictFlag(Boolean conflictFlag) { this.conflictFlag = conflictFlag; }
+    public void setRequest(ResourceRequest request) {
+        this.request = request;
+    }
 
-    public String getNotes() { return notes; }
-    public void setNotes(String notes) { this.notes = notes; }
+    // ✅ REQUIRED BY TEST
+    public LocalDateTime getAllocatedAt() {
+        return allocatedAt;
+    }
+
+    public void setAllocatedAt(LocalDateTime allocatedAt) {
+        this.allocatedAt = allocatedAt;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }
