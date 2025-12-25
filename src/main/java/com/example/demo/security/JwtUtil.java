@@ -1,67 +1,42 @@
 package com.example.demo.security;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+
+import java.security.Key;
+import java.util.Date;
 
 public class JwtUtil {
 
-    private final String secret;
-    private final long validityMs;
+    private final Key key;
+    private final long validityInMs;
 
-    public JwtUtil(String secret, long validityMs) {
-        this.secret = secret;
-        this.validityMs = validityMs;
+    public JwtUtil(String secretKey, long validityInMs) {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        this.validityInMs = validityInMs;
     }
 
     public String generateToken(Long userId, String email, String role) {
-        long expiry = System.currentTimeMillis() + validityMs;
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("userId", userId);
+        claims.put("role", role);
 
-        String payload = userId + "|" + email + "|" + role + "|" + expiry;
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + validityInMs);
 
-        return Base64.getEncoder().encodeToString(payload.getBytes())
-                + "." +
-               Base64.getEncoder().encodeToString(secret.getBytes());
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    public Map<String, Object> parseClaims(String token) {
-        try {
-            String[] parts = token.split("\\.");
-            if (parts.length != 2) {
-                throw new RuntimeException("Invalid token");
-            }
-
-            String decoded = new String(Base64.getDecoder().decode(parts[0]));
-            String[] values = decoded.split("\\|");
-
-            long expiry = Long.parseLong(values[3]);
-            if (System.currentTimeMillis() > expiry) {
-                throw new RuntimeException("Token expired");
-            }
-
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("userId", Long.parseLong(values[0]));
-            claims.put("role", values[2]);
-            claims.put("sub", values[1]);
-
-            return new ClaimsAdapter(values[1], claims);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid token");
-        }
-    }
-
-    /* Internal helper class to mimic JWT Claims */
-    static class ClaimsAdapter extends HashMap<String, Object> {
-        private final String subject;
-
-        ClaimsAdapter(String subject, Map<String, Object> data) {
-            super(data);
-            this.subject = subject;
-        }
-
-        public String getSubject() {
-            return subject;
-        }
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
