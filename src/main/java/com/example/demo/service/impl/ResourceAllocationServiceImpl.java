@@ -1,52 +1,39 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Resource;
-import com.example.demo.entity.ResourceAllocation;
-import com.example.demo.entity.ResourceRequest;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.ResourceAllocationRepository;
-import com.example.demo.repository.ResourceRepository;
-import com.example.demo.repository.ResourceRequestRepository;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.ResourceAllocationService;
-import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service
 public class ResourceAllocationServiceImpl implements ResourceAllocationService {
 
     private final ResourceRequestRepository reqRepo;
-    private final ResourceRepository resourceRepo;
+    private final ResourceRepository resRepo;
     private final ResourceAllocationRepository allocRepo;
 
-    public ResourceAllocationServiceImpl(ResourceRequestRepository reqRepo, ResourceRepository resourceRepo,
+    public ResourceAllocationServiceImpl(ResourceRequestRepository reqRepo,
+                                         ResourceRepository resRepo,
                                          ResourceAllocationRepository allocRepo) {
         this.reqRepo = reqRepo;
-        this.resourceRepo = resourceRepo;
+        this.resRepo = resRepo;
         this.allocRepo = allocRepo;
     }
 
-    @Override
     public ResourceAllocation autoAllocate(Long requestId) {
-        ResourceRequest request = reqRepo.findById(requestId)
-                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
-        List<Resource> candidates = resourceRepo.findByResourceType(request.getResourceType());
-        if (candidates.isEmpty()) {
-            throw new IllegalArgumentException("No available resources");
-        }
+        ResourceRequest req = reqRepo.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        List<Resource> resources = resRepo.findByResourceType(req.getResourceType());
+        if (resources.isEmpty())
+            throw new RuntimeException("No resource available");
+
         ResourceAllocation alloc = new ResourceAllocation();
-        alloc.setRequest(request);
-        alloc.setResource(candidates.get(0)); // simple first available
-        alloc.setConflictFlag(false);
+        alloc.setResource(resources.get(0));
+        alloc.setRequest(req);
+
         return allocRepo.save(alloc);
     }
 
-    @Override
-    public ResourceAllocation getAllocation(Long id) {
-        return allocRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
-    }
-
-    @Override
     public List<ResourceAllocation> getAllAllocations() {
         return allocRepo.findAll();
     }

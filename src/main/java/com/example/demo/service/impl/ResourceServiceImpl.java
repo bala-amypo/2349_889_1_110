@@ -1,42 +1,33 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Resource;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ResourceRepository;
 import com.example.demo.service.ResourceService;
-import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service
 public class ResourceServiceImpl implements ResourceService {
-    private final ResourceRepository resourceRepository;
 
-    public ResourceServiceImpl(ResourceRepository resourceRepository) {
-        this.resourceRepository = resourceRepository;
+    private final ResourceRepository repo;
+
+    public ResourceServiceImpl(ResourceRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public Resource createResource(Resource resource) {
-        if (resource.getResourceType() == null || resource.getResourceType().isEmpty()) {
-            throw new IllegalArgumentException("resourceType is required");
-        }
-        if (resource.getCapacity() == null || resource.getCapacity() < 1) {
-            throw new IllegalArgumentException("Capacity must be >=1");
-        }
-        if (resourceRepository.existsByResourceName(resource.getResourceName())) {
-            throw new IllegalArgumentException("Resource with this name already exists");
-        }
-        return resourceRepository.save(resource);
+    public Resource createResource(Resource r) {
+        if (r.getResourceType() == null || r.getCapacity() == null || r.getCapacity() < 1)
+            throw new IllegalArgumentException("Invalid resource");
+
+        if (repo.existsByResourceName(r.getResourceName()))
+            throw new IllegalArgumentException("Resource exists");
+
+        return repo.save(r);
     }
 
-    @Override
     public Resource getResource(Long id) {
-        return resourceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Resource not found"));
     }
 
-    @Override
     public List<Resource> getAllResources() {
-        return resourceRepository.findAll();
+        return repo.findAll();
     }
 }
