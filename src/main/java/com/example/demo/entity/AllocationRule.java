@@ -23,7 +23,16 @@ public class AllocationRule {
     public AllocationRule() {}
 
     // getters & setters
-    public Long getId() { return id; }
+     // ✅ REQUIRED BY TEST
+    public Long getId() {
+        return id;
+    }
+
+    // ✅ REQUIRED BY TEST
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
 
     public String getRuleName() { return ruleName; }
     public void setRuleName(String ruleName) { this.ruleName = ruleName; }
