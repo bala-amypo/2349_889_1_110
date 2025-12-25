@@ -2,7 +2,6 @@ package com.example.demo.security;
 
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Map;
 
 public class JwtUtil {
 
@@ -16,7 +15,6 @@ public class JwtUtil {
 
     public String generateToken(Long userId, String email, String role) {
         long expiry = System.currentTimeMillis() + validityMs;
-
         String payload = userId + "|" + email + "|" + role + "|" + expiry;
 
         return Base64.getEncoder().encodeToString(payload.getBytes())
@@ -24,7 +22,8 @@ public class JwtUtil {
                Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public Map<String, Object> parseClaims(String token) {
+    // ✅ RETURN TYPE CHANGED
+    public Claims parseClaims(String token) {
         try {
             String[] parts = token.split("\\.");
             if (parts.length != 2) {
@@ -39,24 +38,22 @@ public class JwtUtil {
                 throw new RuntimeException("Token expired");
             }
 
-            Map<String, Object> claims = new HashMap<>();
+            Claims claims = new Claims(values[1]);
             claims.put("userId", Long.parseLong(values[0]));
             claims.put("role", values[2]);
-            claims.put("sub", values[1]);
 
-            return new ClaimsAdapter(values[1], claims);
+            return claims;
 
         } catch (Exception e) {
             throw new RuntimeException("Invalid token");
         }
     }
 
-    /* Internal helper class to mimic JWT Claims */
-    static class ClaimsAdapter extends HashMap<String, Object> {
+    // ✅ Custom Claims class with getSubject()
+    public static class Claims extends HashMap<String, Object> {
         private final String subject;
 
-        ClaimsAdapter(String subject, Map<String, Object> data) {
-            super(data);
+        public Claims(String subject) {
             this.subject = subject;
         }
 
