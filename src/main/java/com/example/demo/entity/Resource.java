@@ -7,7 +7,6 @@ import java.util.List;
 @Entity
 @Table(name = "resources")
 public class Resource {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,8 +27,16 @@ public class Resource {
 
     public Resource() {}
 
-    // getters & setters
+    public Resource(String resourceName, String resourceType, Integer capacity, String location) {
+        this.resourceName = resourceName;
+        this.resourceType = resourceType;
+        this.capacity = capacity;
+        this.location = location;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getResourceName() { return resourceName; }
     public void setResourceName(String resourceName) { this.resourceName = resourceName; }
@@ -42,4 +49,10 @@ public class Resource {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public List<ResourceAllocation> getAllocations() { return allocations; }
+    public void setAllocations(List<ResourceAllocation> allocations) { this.allocations = allocations; }
 }

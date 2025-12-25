@@ -7,7 +7,6 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +18,7 @@ public class User {
 
     private String password;
 
-    private String role;
+    private String role = "USER";
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -32,10 +31,10 @@ public class User {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
-        this.role = (role == null) ? "USER" : role;
+        this.role = role != null ? role : "USER";
+        this.createdAt = LocalDateTime.now();
     }
 
-    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -52,4 +51,8 @@ public class User {
     public void setRole(String role) { this.role = role; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public List<ResourceRequest> getRequests() { return requests; }
+    public void setRequests(List<ResourceRequest> requests) { this.requests = requests; }
 }

@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "resource_requests")
 public class ResourceRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,6 +13,7 @@ public class ResourceRequest {
     private String resourceType;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User requestedBy;
 
     private LocalDateTime startTime;
@@ -28,7 +28,16 @@ public class ResourceRequest {
 
     public ResourceRequest() {}
 
-    // getters & setters
+    public ResourceRequest(String resourceType, User requestedBy, LocalDateTime startTime,
+                           LocalDateTime endTime, String purpose, String status) {
+        this.resourceType = resourceType;
+        this.requestedBy = requestedBy;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.purpose = purpose;
+        this.status = status != null ? status : "PENDING";
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -49,4 +58,7 @@ public class ResourceRequest {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public ResourceAllocation getAllocation() { return allocation; }
+    public void setAllocation(ResourceAllocation allocation) { this.allocation = allocation; }
 }

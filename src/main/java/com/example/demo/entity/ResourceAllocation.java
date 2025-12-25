@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "resource_allocations")
 public class ResourceAllocation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,58 +13,41 @@ public class ResourceAllocation {
     @ManyToOne
     private Resource resource;
 
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(name = "request_id", unique = true)
     private ResourceRequest request;
 
-    // ✅ REQUIRED BY TEST t38
-    private LocalDateTime allocatedAt;
+    private LocalDateTime allocatedAt = LocalDateTime.now();
+
+    private Boolean conflictFlag = false;
 
     private String notes;
 
-    // ✅ AUTO-SET TIMESTAMP
-    @PrePersist
-    public void onAllocate() {
+    public ResourceAllocation() {}
+
+    public ResourceAllocation(Resource resource, ResourceRequest request, Boolean conflictFlag, String notes) {
+        this.resource = resource;
+        this.request = request;
+        this.conflictFlag = conflictFlag != null ? conflictFlag : false;
+        this.notes = notes;
         this.allocatedAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Resource getResource() { return resource; }
+    public void setResource(Resource resource) { this.resource = resource; }
 
-    public Resource getResource() {
-        return resource;
-    }
+    public ResourceRequest getRequest() { return request; }
+    public void setRequest(ResourceRequest request) { this.request = request; }
 
-    public void setResource(Resource resource) {
-        this.resource = resource;
-    }
+    public LocalDateTime getAllocatedAt() { return allocatedAt; }
+    public void setAllocatedAt(LocalDateTime allocatedAt) { this.allocatedAt = allocatedAt; }
 
-    public ResourceRequest getRequest() {
-        return request;
-    }
+    public Boolean getConflictFlag() { return conflictFlag; }
+    public void setConflictFlag(Boolean conflictFlag) { this.conflictFlag = conflictFlag; }
 
-    public void setRequest(ResourceRequest request) {
-        this.request = request;
-    }
-
-    // ✅ REQUIRED BY TEST
-    public LocalDateTime getAllocatedAt() {
-        return allocatedAt;
-    }
-
-    public void setAllocatedAt(LocalDateTime allocatedAt) {
-        this.allocatedAt = allocatedAt;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 }
