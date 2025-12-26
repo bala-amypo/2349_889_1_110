@@ -3,30 +3,38 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Resource;
 import com.example.demo.repository.ResourceRepository;
 import com.example.demo.service.ResourceService;
-
+import com.example.demo.exception.ResourceNotFoundException;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Service
 public class ResourceServiceImpl implements ResourceService {
+    
+    private final ResourceRepository resourceRepository;
 
-    private final ResourceRepository resourceRepo;
-
-    public ResourceServiceImpl(ResourceRepository resourceRepo) {
-        this.resourceRepo = resourceRepo;
+    public ResourceServiceImpl(ResourceRepository resourceRepository) {
+        this.resourceRepository = resourceRepository;
     }
 
     @Override
     public Resource createResource(Resource resource) {
-        if (resource.getResourceName() == null || resource.getResourceType() == null) {
-            throw new RuntimeException("Invalid resource");
+        if (resource.getResourceType() == null || resource.getCapacity() == null || resource.getCapacity() < 1) {
+            throw new IllegalArgumentException("Invalid resource data");
         }
-        if (resourceRepo.existsByResourceName(resource.getResourceName())) {
-            throw new RuntimeException("Duplicate resource");
+        if (resource.getResourceName() != null && resourceRepository.existsByResourceName(resource.getResourceName())) {
+            throw new IllegalArgumentException("Resource with name already exists");
         }
-        return resourceRepo.save(resource);
+        return resourceRepository.save(resource);
+    }
+
+    @Override
+    public Resource getResource(Long id) {
+        return resourceRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
 
     @Override
     public List<Resource> getAllResources() {
-        return resourceRepo.findAll();
+        return resourceRepository.findAll();
     }
 }
