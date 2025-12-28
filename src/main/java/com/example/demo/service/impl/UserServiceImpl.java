@@ -1,40 +1,40 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Resource;
-import com.example.demo.repository.ResourceRepository;
-import com.example.demo.service.ResourceService;
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
 import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ResourceServiceImpl implements ResourceService {
+public class UserServiceImpl implements UserService {
     
-    private final ResourceRepository resourceRepository;
+    private final UserRepository userRepository;
 
-    public ResourceServiceImpl(ResourceRepository resourceRepository) {
-        this.resourceRepository = resourceRepository;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    public Resource createResource(Resource resource) {
-        if (resource.getResourceType() == null || resource.getCapacity() == null || resource.getCapacity() < 1) {
-            throw new IllegalArgumentException("Invalid resource data");
+    public User registerUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("User with email already exists");
         }
-        if (resource.getResourceName() != null && resourceRepository.existsByResourceName(resource.getResourceName())) {
-            throw new IllegalArgumentException("Resource with name already exists");
+        if (user.getRole() == null) {
+            user.setRole("USER");
         }
-        return resourceRepository.save(resource);
+        return userRepository.save(user);
     }
 
     @Override
-    public Resource getResource(Long id) {
-        return resourceRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+    public User getUser(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Override
-    public List<Resource> getAllResources() {
-        return resourceRepository.findAll();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
